@@ -34,14 +34,21 @@ namespace Gatosyocora.VRCPhotoAlbum.Helpers
         public static VrcMetaData GetVrcMetaData(string filePath)
         {
             //return new VrcMetaData();
-            if (!VrcMetaDataReader.TryRead(filePath, out VrcMetaData meta))
+            try
             {
-                meta = new VrcMetaData
+                if (!VrcMetaDataReader.TryRead(filePath, out VrcMetaData meta))
                 {
-                    Date = GetDateTimeFromPhotoName(filePath)
-                };
+                    meta = new VrcMetaData
+                    {
+                        Date = GetDateTimeFromPhotoName(filePath)
+                    };
+                }
+                return meta;
             }
-            return meta;
+            catch (Exception e)
+            {
+                return new VrcMetaData();
+            }
         }
 
         public static Task<VrcMetaData> GetVrcMetaDataAsync(string filePath, CancellationToken cancelToken) => Task.Run(() => GetVrcMetaData(filePath), cancelToken);
